@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIWorld · Cyberpunk Control Deck</title>
+    <style>
+      :root {
+        --bg: #070913;
+        --bg-grid: rgba(0, 245, 255, 0.08);
+        --neon-cyan: #00f5ff;
+        --neon-pink: #ff2bd6;
+        --neon-green: #79ff9b;
+        --text-main: #d9f8ff;
+        --text-dim: #8ea8b7;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--text-main);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(0, 245, 255, 0.16), transparent 40%),
+          radial-gradient(circle at 80% 10%, rgba(255, 43, 214, 0.12), transparent 35%),
+          linear-gradient(160deg, #06070f 0%, #05060d 40%, #090b15 100%);
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--bg-grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+        background-size: 28px 28px;
+        pointer-events: none;
+      }
+
+      .wrap {
+        width: min(1100px, 92vw);
+        margin: 0 auto;
+        padding: 3rem 0 2rem;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: var(--neon-cyan);
+        text-shadow: 0 0 14px rgba(0, 245, 255, 0.55);
+      }
+
+      .status {
+        border: 1px solid rgba(121, 255, 155, 0.5);
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        color: var(--neon-green);
+        font-size: 0.86rem;
+      }
+
+      .hero {
+        border: 1px solid rgba(0, 245, 255, 0.4);
+        background: rgba(8, 14, 27, 0.78);
+        border-radius: 18px;
+        padding: 2rem;
+        box-shadow: 0 0 24px rgba(0, 245, 255, 0.18), inset 0 0 30px rgba(255, 43, 214, 0.08);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 3.2rem);
+        line-height: 1.2;
+      }
+
+      .neon {
+        color: var(--neon-pink);
+        text-shadow: 0 0 12px rgba(255, 43, 214, 0.75);
+      }
+
+      .sub {
+        color: var(--text-dim);
+        margin-top: 1rem;
+        font-size: 1.05rem;
+      }
+
+      .grid {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .card {
+        border: 1px solid rgba(0, 245, 255, 0.25);
+        border-radius: 12px;
+        padding: 1rem;
+        background: rgba(10, 16, 30, 0.72);
+      }
+
+      .card h3 {
+        margin: 0 0 0.5rem;
+        color: var(--neon-cyan);
+        font-size: 1rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: #b6cad6;
+        font-size: 0.92rem;
+      }
+
+      .actions {
+        margin-top: 1.6rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+      }
+
+      .btn {
+        text-decoration: none;
+        color: var(--text-main);
+        border: 1px solid rgba(255, 43, 214, 0.5);
+        background: linear-gradient(135deg, rgba(255, 43, 214, 0.2), rgba(0, 245, 255, 0.15));
+        border-radius: 10px;
+        padding: 0.6rem 1rem;
+        font-weight: 600;
+      }
+
+      .footer {
+        margin-top: 1.4rem;
+        color: #7d93a7;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="topbar">
+        <div class="brand">AIWORLD://CORE</div>
+        <div class="status">SYSTEM ONLINE</div>
+      </header>
+
+      <section class="hero">
+        <h1>欢迎来到 <span class="neon">AI 驱动世界控制台</span></h1>
+        <p class="sub">统一接入多模型与第三方 API，在容器环境中构建、编排并扩展你的 AI World。</p>
+
+        <div class="grid">
+          <article class="card">
+            <h3>模型接入层</h3>
+            <p>OpenAI / Anthropic / Gemini 等多厂商模型统一接入与策略路由。</p>
+          </article>
+          <article class="card">
+            <h3>工具与资源层</h3>
+            <p>搜索、存储、自动化、知识库等第三方能力通过网关统一注册。</p>
+          </article>
+          <article class="card">
+            <h3>治理与审计层</h3>
+            <p>细粒度权限、调用日志与限流策略，保障系统稳定与可追踪。</p>
+          </article>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="/health">健康检查</a>
+          <a class="btn" href="https://github.com/" target="_blank" rel="noreferrer">扩展你的世界</a>
+        </div>
+
+        <div class="footer">AIWorld Gateway · Cyberpunk Edition</div>
+      </section>
+    </main>
+  </body>
+</html>

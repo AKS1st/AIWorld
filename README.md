@@ -54,7 +54,11 @@ cp .env.example .env
 docker compose up -d
 ```
 
-4. 查看日志：
+4. 打开主界面（赛博朋克风控制台）：
+
+- http://localhost:8080
+
+5. 查看日志：
 
 ```bash
 docker compose logs -f gateway
@@ -79,3 +83,8 @@ docker compose logs -f gateway
 1) 一个可运行的 API 网关；
 2) 多模型路由策略（按成本/延迟/质量）；
 3) 第三方工具统一注册表。
+
+
+## 当前界面
+
+- 主页已提供赛博朋克风格主界面，可作为后续接入真实网关与控制台功能的 UI 基础。

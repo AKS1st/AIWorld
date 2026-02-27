@@ -15,3 +15,4 @@ services:
       - AUTOMATION_API_KEY=${AUTOMATION_API_KEY}
     volumes:
       - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./infra/nginx/html:/usr/share/nginx/html:ro
