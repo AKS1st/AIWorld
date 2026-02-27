@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIWorld · Cyberpunk Control Deck</title>
+    <style>
+      :root {
+        --bg-grid: rgba(0, 245, 255, 0.08);
+        --neon-cyan: #00f5ff;
+        --neon-pink: #ff2bd6;
+        --neon-green: #79ff9b;
+        --text-main: #d9f8ff;
+        --text-dim: #8ea8b7;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--text-main);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(0, 245, 255, 0.16), transparent 40%),
+          radial-gradient(circle at 80% 10%, rgba(255, 43, 214, 0.12), transparent 35%),
+          linear-gradient(160deg, #06070f 0%, #05060d 40%, #090b15 100%);
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--bg-grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+        background-size: 28px 28px;
+        pointer-events: none;
+      }
+      .wrap { width: min(1100px, 92vw); margin: 0 auto; padding: 2rem 0; position: relative; z-index: 1; }
+      .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+      .brand { font-weight: 800; letter-spacing: 0.08em; color: var(--neon-cyan); text-shadow: 0 0 14px rgba(0, 245, 255, 0.55); }
+      .status { border: 1px solid rgba(121, 255, 155, 0.5); padding: 0.35rem 0.7rem; border-radius: 999px; color: var(--neon-green); font-size: 0.86rem; }
+      .panel {
+        border: 1px solid rgba(0, 245, 255, 0.4);
+        background: rgba(8, 14, 27, 0.78);
+        border-radius: 18px;
+        padding: 1.4rem;
+        box-shadow: 0 0 24px rgba(0, 245, 255, 0.18), inset 0 0 30px rgba(255, 43, 214, 0.08);
+      }
+      .auth-card { max-width: 460px; margin: 7vh auto 0; }
+      .title { margin: 0 0 0.6rem; font-size: clamp(1.4rem, 3vw, 2rem); }
+      .neon { color: var(--neon-pink); text-shadow: 0 0 12px rgba(255, 43, 214, 0.75); }
+      .sub { color: var(--text-dim); margin: 0 0 1rem; }
+      .form-row { margin-bottom: 0.8rem; }
+      label { display: block; margin-bottom: 0.35rem; color: #a8c2d0; font-size: 0.9rem; }
+      input {
+        width: 100%; padding: 0.68rem 0.75rem; border-radius: 10px;
+        border: 1px solid rgba(0, 245, 255, 0.35); background: rgba(7, 12, 22, 0.9); color: var(--text-main);
+      }
+      .btn {
+        display: inline-block; border: 1px solid rgba(255, 43, 214, 0.5);
+        background: linear-gradient(135deg, rgba(255, 43, 214, 0.2), rgba(0, 245, 255, 0.15));
+        color: var(--text-main); border-radius: 10px; padding: 0.62rem 1rem; font-weight: 600; cursor: pointer;
+      }
+      .msg { min-height: 1.2rem; margin-top: 0.65rem; font-size: 0.9rem; color: #ffd47b; }
+      .ok { color: var(--neon-green); }
+
+      .dashboard { display: none; }
+      .hero h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3.2rem); line-height: 1.2; }
+      .grid { margin-top: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+      .card { border: 1px solid rgba(0, 245, 255, 0.25); border-radius: 12px; padding: 1rem; background: rgba(10, 16, 30, 0.72); }
+      .card h3 { margin: 0 0 0.5rem; color: var(--neon-cyan); font-size: 1rem; }
+      .card p { margin: 0; color: #b6cad6; font-size: 0.92rem; }
+      .actions { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+      .footer { margin-top: 1.3rem; color: #7d93a7; font-size: 0.85rem; }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="topbar">
+        <div class="brand">AIWORLD://CORE</div>
+        <div class="status" id="statusBadge">AUTH REQUIRED</div>
+      </header>
+
+      <section id="setupPanel" class="panel auth-card" style="display:none;">
+        <h1 class="title">首次启动：<span class="neon">设置账号</span></h1>
+        <p class="sub">检测到这是首次使用，请创建管理员账号与密码。</p>
+        <div class="form-row"><label for="setupUser">账号</label><input id="setupUser" autocomplete="username" /></div>
+        <div class="form-row"><label for="setupPass">密码</label><input id="setupPass" type="password" autocomplete="new-password" /></div>
+        <button class="btn" id="setupBtn">保存并进入</button>
+        <div class="msg" id="setupMsg"></div>
+      </section>
+
+      <section id="loginPanel" class="panel auth-card" style="display:none;">
+        <h1 class="title">访问 <span class="neon">AIWorld</span> 控制台</h1>
+        <p class="sub">登录成功后当前浏览器可 30 天免登录。</p>
+        <div class="form-row"><label for="loginUser">账号</label><input id="loginUser" autocomplete="username" /></div>
+        <div class="form-row"><label for="loginPass">密码</label><input id="loginPass" type="password" autocomplete="current-password" /></div>
+        <button class="btn" id="loginBtn">登录</button>
+        <div class="msg" id="loginMsg"></div>
+      </section>
+
+      <section id="dashboard" class="panel dashboard hero">
+        <h1>欢迎来到 <span class="neon">AI 驱动世界控制台</span></h1>
+        <p class="sub">统一接入多模型与第三方 API，在容器环境中构建、编排并扩展你的 AI World。</p>
+
+        <div class="grid">
+          <article class="card">
+            <h3>模型接入层</h3>
+            <p>OpenAI / Anthropic / Gemini 等多厂商模型统一接入与策略路由。</p>
+          </article>
+          <article class="card">
+            <h3>工具与资源层</h3>
+            <p>搜索、存储、自动化、知识库等第三方能力通过网关统一注册。</p>
+          </article>
+          <article class="card">
+            <h3>治理与审计层</h3>
+            <p>细粒度权限、调用日志与限流策略，保障系统稳定与可追踪。</p>
+          </article>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="/health">健康检查</a>
+          <button class="btn" id="logoutBtn" type="button">退出登录</button>
+        </div>
+
+        <div class="footer">AIWorld Gateway · Cyberpunk Edition</div>
+      </section>
+    </main>
+
+    <script>
+      const AUTH_KEY = "aiworld_auth_v1";
+      const SESSION_KEY = "aiworld_session_v1";
+      const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+      const setupPanel = document.getElementById("setupPanel");
+      const loginPanel = document.getElementById("loginPanel");
+      const dashboard = document.getElementById("dashboard");
+      const statusBadge = document.getElementById("statusBadge");
+
+      const setupMsg = document.getElementById("setupMsg");
+      const loginMsg = document.getElementById("loginMsg");
+
+      function textToHex(buffer) {
+        return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+      }
+
+      async function sha256(input) {
+        const data = new TextEncoder().encode(input);
+        const digest = await crypto.subtle.digest("SHA-256", data);
+        return textToHex(digest);
+      }
+
+      function getStoredAuth() {
+        try {
+          return JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
+        } catch {
+          return null;
+        }
+      }
+
+      function getStoredSession() {
+        try {
+          return JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+        } catch {
+          return null;
+        }
+      }
+
+      function show(mode) {
+        setupPanel.style.display = mode === "setup" ? "block" : "none";
+        loginPanel.style.display = mode === "login" ? "block" : "none";
+        dashboard.style.display = mode === "dashboard" ? "block" : "none";
+        statusBadge.textContent = mode === "dashboard" ? "SYSTEM ONLINE" : "AUTH REQUIRED";
+      }
+
+      function createSession(username) {
+        const session = { username, expiresAt: Date.now() + SESSION_TTL_MS };
+        localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      }
+
+      async function handleSetup() {
+        const username = document.getElementById("setupUser").value.trim();
+        const password = document.getElementById("setupPass").value;
+        if (!username || password.length < 6) {
+          setupMsg.textContent = "请输入账号，且密码长度至少 6 位。";
+          return;
+        }
+        const salt = crypto.randomUUID();
+        const passwordHash = await sha256(`${salt}:${password}`);
+        localStorage.setItem(AUTH_KEY, JSON.stringify({ username, salt, passwordHash, createdAt: Date.now() }));
+        createSession(username);
+        setupMsg.textContent = "账号创建成功，正在进入控制台...";
+        setupMsg.classList.add("ok");
+        show("dashboard");
+      }
+
+      async function handleLogin() {
+        const auth = getStoredAuth();
+        const username = document.getElementById("loginUser").value.trim();
+        const password = document.getElementById("loginPass").value;
+        if (!auth) {
+          show("setup");
+          return;
+        }
+        const passwordHash = await sha256(`${auth.salt}:${password}`);
+        if (username !== auth.username || passwordHash !== auth.passwordHash) {
+          loginMsg.textContent = "账号或密码错误，请重试。";
+          return;
+        }
+        createSession(username);
+        loginMsg.textContent = "登录成功，30 天内免登录。";
+        loginMsg.classList.add("ok");
+        show("dashboard");
+      }
+
+      function handleLogout() {
+        localStorage.removeItem(SESSION_KEY);
+        loginMsg.textContent = "已退出登录。";
+        loginMsg.classList.remove("ok");
+        show("login");
+      }
+
+      function boot() {
+        const auth = getStoredAuth();
+        const session = getStoredSession();
+        if (!auth) {
+          show("setup");
+          return;
+        }
+        if (session && session.expiresAt > Date.now() && session.username === auth.username) {
+          show("dashboard");
+          return;
+        }
+        show("login");
+      }
+
+      document.getElementById("setupBtn").addEventListener("click", handleSetup);
+      document.getElementById("loginBtn").addEventListener("click", handleLogin);
+      document.getElementById("logoutBtn").addEventListener("click", handleLogout);
+      boot();
+    </script>
+  </body>
+</html>
